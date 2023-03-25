@@ -1,0 +1,6 @@
+<persistence>
+    <persistence-unit>
+        <class>ru.bogachenko.models.OwnerModel</class>
+        <class>ru.bogachenko.models.CatModel</class>
+    </persistence-unit>
+</persistence>

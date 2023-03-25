@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+        version="2.1">
+
+    <tlib-version>1.0</tlib-version>
+    <short-name>myshortname</short-name>
+    <uri>http://mycompany.com</uri>
+
+    <!-- Invoke 'Generate' action to add tags or functions -->
+
+</taglib>
+
+<persistence>
+<persistence-unit name="JavaRush">
+    <description>Persistence Unit For test</description>
+    <class>hibernate.model.Category</class>
+    <class>hibernate.model.Topic</class>
+</persistence-unit>
+</persistence>
+
+<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+<properties>
+    <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
+    <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MVCC=TRUE" />
+    <property name="javax.persistence.jdbc.user" value="sa" />
+    <property name="javax.persistence.jdbc.password" value="" />
+    <property name="hibernate.show_sql" value="true" />
+    <property name="hibernate.hbm2ddl.auto" value="create" />
+</properties>
