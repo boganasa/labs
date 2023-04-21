@@ -66,14 +66,11 @@ public class OwnerImpl implements Owner {
         CatModel newCat = catModelRepository.findByID(catId);
         if (newCat.getOwner() != null){
             OwnerModel owner = ownerModelRepository.findByID(newCat.getOwner().getId());
+
             Set<CatModel> cats = owner.getCats();
             cats.remove(newCat);
             owner.setCats(cats);
             ownerModelRepository.saveAndFlush(owner);
-            OwnerOOP oldOwner = getOwnerById(owner.getId());
-            Set<CatOOP> catsOOP = oldOwner.getCats();
-            catsOOP.remove(catModelRepository.findByID(catId));
-            oldOwner.setOwnerCats(catsOOP);
         }
         newCat.setOwner(ownerModelRepository.findByID(id));
         catModelRepository.saveAndFlush(newCat);
