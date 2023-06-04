@@ -1,13 +1,12 @@
 package ru.bogachenko.services;
 
-import org.springframework.security.core.userdetails.UserDetailsService;
 import ru.bogachenko.OOPModel.CatOOP;
 import ru.bogachenko.OOPModel.OwnerOOP;
 
 import java.util.List;
 import java.util.Set;
 
-public interface Owner extends UserDetailsService {
+public interface Owner  {
     OwnerOOP getOwnerByUsername(String username);
     List<OwnerOOP> findAllOwners();
     Set<CatOOP> getCats(long id);

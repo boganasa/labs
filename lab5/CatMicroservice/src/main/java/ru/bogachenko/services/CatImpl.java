@@ -37,7 +37,6 @@ public class CatImpl implements Cat {
         newCat.setName(newOOPCat.getName());
         newCat.setBreed(newOOPCat.getBreed());
         newCat.setColor(newOOPCat.getColor());
-        newCat.setBirthday(newOOPCat.getBirthday());
         catModelRepository.saveAndFlush(newCat);
         // new DaoCatImpl().createCat(newCat);
         newOOPCat.setId(newCat.getId());
@@ -102,8 +101,6 @@ public class CatImpl implements Cat {
             ownerOOP.setName(owner.getName());
             ownerOOP.setBirthday(owner.getBirthday());
             ownerOOP.setId(owner.getId());
-            ownerOOP.setPassword(owner.getPassword());
-            ownerOOP.setRoles(owner.getAuthorities());
             catOOp.setOwner(ownerOOP);
         }
         return catOOp;

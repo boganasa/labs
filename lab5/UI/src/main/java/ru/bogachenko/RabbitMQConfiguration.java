@@ -1,4 +1,4 @@
-package ru.bogachenko.RabbitMQ;
+package ru.bogachenko;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitMQConfig {
+public class RabbitMQConfiguration {
     @Value("${sample.rabbitmq.queue}")
     String queueName;
     @Value("${sample.rabbitmq.exchange}")
@@ -20,7 +20,7 @@ public class RabbitMQConfig {
 
     @Bean
     Queue queue() {
-        return new Queue(queueName, false);
+        return new Queue(queueName, true);
     }
 
     @Bean
@@ -40,8 +40,11 @@ public class RabbitMQConfig {
 
     @Bean
     public AmqpTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
         rabbitTemplate.setMessageConverter(jsonMessageConverter());
+        rabbitTemplate.setRoutingKey(routingkey);
+        rabbitTemplate.setExchange(exchange);
+        rabbitTemplate.setDefaultReceiveQueue(queueName);
         return rabbitTemplate;
     }
 }

@@ -1,17 +1,17 @@
 package ru.bogachenko.DAOModel;
 
-import java.util.*;
-
-import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.bogachenko.DAOModel.CatModel;
+
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 @Entity
 @Table(name = "owners", schema = "public")
-public class OwnerModel implements UserDetails {
+public class OwnerModel {
     @Column(name = "ownerid")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,15 +84,6 @@ public class OwnerModel implements UserDetails {
                 '}';
     }
 
-    @Override
-    public Set<Role> getAuthorities() {
-        return roles;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
 
     public void setPassword(String password) {
         this.password = password;
@@ -103,28 +94,4 @@ public class OwnerModel implements UserDetails {
         this.roles = roles;
     }
 
-    @Override
-    public String getUsername() {
-        return name;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 }

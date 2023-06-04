@@ -1,23 +1,14 @@
 package ru.bogachenko.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.userdetails.UserDetails;
 import ru.bogachenko.DAOModel.CatModel;
 import ru.bogachenko.DAOModel.OwnerModel;
-import ru.bogachenko.DAOModel.Role;
 import ru.bogachenko.OOPModel.CatOOP;
 import ru.bogachenko.OOPModel.OwnerOOP;
 import ru.bogachenko.repositories.CatModelRepository;
 import ru.bogachenko.repositories.OwnerModelRepository;
-import ru.bogachenko.services.CatImpl;
-import ru.bogachenko.services.Owner;
 
-import java.security.SecureRandom;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,15 +23,8 @@ public class OwnerImpl implements Owner {
     @Autowired
     private CatModelRepository catModelRepository;
 
-    private final PasswordEncoder passwordEncoder;
 
-    public OwnerImpl(){
-        passwordEncoder = new BCryptPasswordEncoder(12, new SecureRandom());
-    }
 
-    public OwnerImpl(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
     @Override
     public void createOwner(OwnerOOP ownerOOP) {
         OwnerModel owner = new OwnerModel();
@@ -65,16 +49,6 @@ public class OwnerImpl implements Owner {
         ownerOOP.setName(owner.getName());
         ownerOOP.setBirthday(owner.getBirthday());
         ownerOOP.setId(owner.getId());
-        ownerOOP.setPassword(owner.getPassword());
-        ownerOOP.setRoles(owner.getAuthorities());
-        Set<CatOOP> cats = new HashSet<>();
-        CatImpl serviceCat = new CatImpl();
-        for (CatModel cat : owner.getCats()) {
-            if(cat.getId() != null) {
-                cats.add(serviceCat.getCatById(cat.getId()));
-            }
-        }
-        ownerOOP.setOwnerCats(cats);
         return ownerOOP;
     }
 
@@ -86,8 +60,6 @@ public class OwnerImpl implements Owner {
         ownerOOP.setName(owner.getName());
         ownerOOP.setBirthday(owner.getBirthday());
         ownerOOP.setId(owner.getId());
-        ownerOOP.setPassword(owner.getPassword());
-        ownerOOP.setRoles(owner.getAuthorities());
         Set<CatOOP> cats = new HashSet<>();
         CatImpl serviceCat = new CatImpl();
         for (CatModel cat : owner.getCats()) {
@@ -95,7 +67,6 @@ public class OwnerImpl implements Owner {
                 cats.add(serviceCat.getCatById(cat.getId()));
             }
         }
-        ownerOOP.setOwnerCats(cats);
         return ownerOOP;
     }
 
@@ -146,8 +117,6 @@ public class OwnerImpl implements Owner {
         ownerOOp.setId(ownerDao.getId());
         ownerOOp.setName(ownerDao.getName());
         ownerOOp.setBirthday(ownerDao.getBirthday());
-        ownerOOp.setPassword(ownerDao.getPassword());
-        ownerOOp.setRoles(ownerDao.getAuthorities());
         return ownerOOp;
     }
 
@@ -155,17 +124,9 @@ public class OwnerImpl implements Owner {
         OwnerModel owner = new OwnerModel();
         owner.setName(ownerOOP.getName());
         owner.setBirthday(ownerOOP.getBirthday());
-        owner.setRoles(Collections.singleton(new Role(1L)));
-        owner.setPassword(passwordEncoder.encode(ownerOOP.getPassword()));
         ownerModelRepository.saveAndFlush(owner);
         ownerOOP.setId(owner.getId());
         return true;
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        OwnerModel ownerDao = ownerModelRepository.findByUsername(username);
-        OwnerOOP ownerOOP = buildOOPOwnerFromDaoOwner(ownerDao);
-        return (UserDetails) ownerOOP;
-    }
 }

@@ -36,7 +36,6 @@ public class CatOOP {
     public CatOOP(CatOOP cat) {
         id = cat.getId();
         name = cat.getName();
-        birthday = cat.getBirthday();
         breed = cat.getBreed();
         color = cat.getColor();
         friends = new HashSet<>(cat.getFriends());
@@ -55,9 +54,6 @@ public class CatOOP {
         this.name = name;
     }
 
-    public Date getBirthday() {
-        return birthday;
-    }
 
     public void setBirthday(Date birthday) {
         this.birthday = birthday;

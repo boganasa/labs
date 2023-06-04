@@ -1,77 +1,54 @@
 package ru.bogachenko;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.bogachenko.OOPModel.OwnerOOP;
-import ru.bogachenko.exceptions.OwnerNotFoundException;
-import ru.bogachenko.services.OwnerImpl;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/api/owners")
 public class OwnerController {
-    OwnerImpl ownerService;
+    AmqpTemplate rabbitTemplate;
+    private final ObjectMapper objectMapper;
+
+
 
     @Autowired
-    public OwnerController(OwnerImpl ownerService) {
-        this.ownerService = ownerService;
+    public OwnerController(AmqpTemplate rabbitTemplate, ObjectMapper objectMapper) {
+        this.rabbitTemplate = rabbitTemplate;
+        this.objectMapper = objectMapper;
     }
 
-    @GetMapping(value = "/all", produces = APPLICATION_JSON_VALUE)
-    public List<OwnerOOP> findAll() {
-        return ownerService.findAllOwners();
-    }
 
     @GetMapping(value = "/{ownerId}")
-    public OwnerOOP getOwnerById(@PathVariable long ownerId) {
-        if (ownerService.getOwnerById(ownerId) == null)
-        {
-            throw new OwnerNotFoundException(ownerId);
-        }
-        OwnerOOP owner = new OwnerOOP(ownerService.getOwnerById(ownerId));
-        return owner;
-    }
-
-    @GetMapping (value = "/create", params = {"birthday"})
-    public String create( @RequestParam String birthday,
-                          @RequestParam(required = false, defaultValue = "Anonimus") String name) {
+    public ResponseEntity<OwnerOOP> getOwnerById(@PathVariable long ownerId) throws JsonProcessingException {
         OwnerOOP owner = new OwnerOOP();
-        owner.setName(name);
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        Date date;
-        try {
-            date = formatter.parse(birthday);
-        } catch (ParseException e) {
-            return "Error with birthday";
-        }
-        owner.setBirthday(date);
-        ownerService.createOwner(owner);
-        return owner + "is created";
+        owner.setId(ownerId);
+        String ownerWrapped = objectMapper.writeValueAsString(owner);
+        return ResponseEntity.ok(objectMapper.readValue((String) rabbitTemplate.convertSendAndReceive("key", ownerWrapped), new TypeReference<>() {}));
     }
 
-    @DeleteMapping(value = "/delete/{ownerId}", produces = APPLICATION_JSON_VALUE)
-    public void deleteOwner(@PathVariable long ownerId) {
-        if (ownerService.getOwnerById(ownerId) == null)
-        {
-            throw new OwnerNotFoundException(ownerId);
-        }
-        ownerService.deleteOwner(ownerId);
+    @PostMapping (value = "/create")
+    public ResponseEntity<OwnerOOP> create( @RequestBody OwnerOOP ownerOOP) throws JsonProcessingException {
+        OwnerOOP owner = new OwnerOOP();
+        owner.setName(ownerOOP.getName());
+        String ownerWrapped = objectMapper.writeValueAsString(owner);
+        return ResponseEntity.ok(objectMapper.readValue((String) rabbitTemplate.convertSendAndReceive("key", ownerWrapped), new TypeReference<>() {}));
     }
 
-    @GetMapping(value = "/tame", params = {"ownerId", "catId"})
-    public String toTame(@RequestParam String ownerId, @RequestParam String catId){
-        long catID = Long.valueOf(catId).longValue();
-        long ownerID = Long.valueOf(ownerId).longValue();
+    @DeleteMapping(value = "/delete/{ownerId}")
+    public void deleteCat(@PathVariable long ownerId) throws JsonProcessingException {
+        OwnerOOP owner = new OwnerOOP();
+        owner.setId(ownerId);
+        String ownerWrapped = objectMapper.writeValueAsString(owner);
 
-        ownerService.addNewCatToOwner(ownerID, catID);
+        rabbitTemplate.convertSendAndReceive("key", ownerWrapped);
 
-        return "Now this cat have new owner:\n";
     }
+
+
 }
