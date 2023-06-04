@@ -1,12 +1,12 @@
-**/build
-**/.gradle
-build/*
-!build/build.xml
 ### IntelliJ IDEA ###
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .idea
+
+### Gradle ###
+.gradle/
+**/build/**
 
 ### Eclipse ###
 .apt_generated
