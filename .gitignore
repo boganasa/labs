@@ -1,5 +1,7 @@
 **/build
 **/.gradle
+build/*
+!build/build.xml
 ### IntelliJ IDEA ###
 out/
 !**/src/main/**/out/

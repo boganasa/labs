@@ -15,7 +15,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-security:3.0.4")
     implementation("com.netflix.zuul:zuul-processor:2.3.0")
     implementation(project(mapOf("path" to ":lab5:CatMicroservice")))
     implementation("org.springframework.amqp:spring-rabbit:3.0.2")
@@ -36,11 +35,9 @@ dependencies {
     testImplementation ("org.springframework.boot:spring-boot-starter-test")
     testImplementation ("org.springframework.integration:spring-integration-test")
 
-    compile ("org.springframework.boot:spring-boot-starter-security")
 
     compileOnly ("javax.servlet:javax.servlet-api:4.0.1")
     implementation ("javax.servlet:jstl:1.2")
-    implementation ("org.springframework:spring-webmvc:5.2.22.RELEASE")
     implementation ("org.webjars:bootstrap:5.2.0")
     testImplementation ("org.springframework:spring-test:5.2.22.RELEASE")
     testImplementation ("org.hamcrest:hamcrest-core:2.2")
